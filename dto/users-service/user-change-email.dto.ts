@@ -1,8 +1,8 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { UserDto } from './user.dto';
+import { UserDTO } from './user.dto';
 
-export class UserChangeEmailDto extends PickType(UserDto, [
+export class UserChangeEmailDTO extends PickType(UserDTO, [
   'email',
 ] as const) {
   @IsEmail()

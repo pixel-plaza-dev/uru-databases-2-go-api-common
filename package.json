@@ -1,0 +1,15 @@
+{
+  "name": "uru-databases-2-api-commons",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pixel-plaza-dev",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/swagger": "^7.4.2",
+    "class-validator": "^0.14.1"
+  }
+}
