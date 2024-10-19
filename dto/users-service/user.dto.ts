@@ -9,62 +9,62 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {ApiProperty, ApiPropertyOptional} from '@nestjs/swagger';
 
 export class UserDTO {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly id: string;
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    readonly id: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly email: string;
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    readonly email: string;
 
-  @IsAlphanumeric()
-  @IsNotEmpty()
-  @ApiProperty()
-  @MaxLength(64)
-  readonly username: string;
+    @IsAlphanumeric()
+    @IsNotEmpty()
+    @ApiProperty()
+    @MaxLength(64)
+    readonly username: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(12)
-  @MaxLength(64)
-  @ApiProperty()
-  readonly password: string;
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(12)
+    @MaxLength(64)
+    @ApiProperty()
+    readonly password: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(12)
-  @MaxLength(64)
-  @ApiProperty()
-  readonly confirmPassword: string;
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(12)
+    @MaxLength(64)
+    @ApiProperty()
+    readonly confirmPassword: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly firstName: string;
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    readonly firstName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly lastName: string;
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    readonly lastName: string;
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  @ApiPropertyOptional()
-  readonly address?: string;
+    @IsOptional()
+    @IsString()
+    @MaxLength(100)
+    @ApiPropertyOptional()
+    readonly address?: string;
 
-  @IsOptional()
-  @IsNumberString()
-  @ApiPropertyOptional()
-  readonly phone?: string;
+    @IsOptional()
+    @IsNumberString()
+    @ApiPropertyOptional()
+    readonly phone?: string;
 
-  @IsOptional()
-  @IsDate()
-  @ApiPropertyOptional()
-  readonly birthDate?: Date;
+    @IsOptional()
+    @IsDate()
+    @ApiPropertyOptional()
+    readonly birthDate?: Date;
 }

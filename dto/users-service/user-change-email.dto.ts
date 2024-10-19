@@ -1,12 +1,12 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { UserDTO } from './user.dto';
+import {IsEmail, IsNotEmpty} from 'class-validator';
+import {ApiProperty, PickType} from '@nestjs/swagger';
+import {UserDTO} from './user.dto';
 
 export class UserChangeEmailDTO extends PickType(UserDTO, [
-  'email',
+    'email',
 ] as const) {
-  @IsEmail()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly newEmail: string;
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    readonly newEmail: string;
 }
