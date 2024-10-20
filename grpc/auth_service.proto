@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package pixelplaza;
+package pixel_plaza.auth_service;
+
+option go_package = "pixel_plaza/auth_service";
 
 service AuthService {
   rpc LogIn(LogInRequest) returns (LogInResponse) {}
