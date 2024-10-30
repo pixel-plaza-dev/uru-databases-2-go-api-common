@@ -2,25 +2,40 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-common/gin/middleware"
-	autherror "github.com/pixel-plaza-dev/uru-databases-2-api-common/gin/middleware/auth/error"
-	commonjwterror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt/error"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt/validator"
 	"strings"
 )
 
-func Auth(validator *commonjwtvalidator.Validator, validateClaims func(*jwt.Token) (*jwt.Token, error)) gin.HandlerFunc {
+type (
+	Authentication interface {
+		Authenticate()
+	}
+
+	Middleware struct {
+		validator *commonjwtvalidator.Validator
+	}
+)
+
+// NewMiddleware creates a new authentication middleware
+func NewMiddleware(validator *commonjwtvalidator.Validator) *Middleware {
+	return &Middleware{
+		validator: validator,
+	}
+}
+
+// Authenticate return the middleware function
+func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		// Get the authorization from the header
 		authorization := context.GetHeader("Authorization")
 
 		// Check if the authorization is a bearer token
 		parts := strings.Split(authorization, " ")
+
+		// Return an error if the authorization is missing or invalid
 		if len(parts) < 2 || parts[0] != "Bearer" {
-			// Return an error if the authorization is missing or invalid
-			err := autherror.RequestInvalidAuthorizationHeaderError{}
-			context.JSON(401, gin.H{"error": err.Error()})
+			context.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError})
 			context.Abort()
 			return
 		}
@@ -29,9 +44,9 @@ func Auth(validator *commonjwtvalidator.Validator, validateClaims func(*jwt.Toke
 		tokenString := parts[1]
 
 		// Validate the token
-		token, err := validator.GetToken(tokenString, validateClaims)
+		token, err := m.validator.GetToken(tokenString)
 		if err != nil {
-			context.JSON(401, gin.H{"error": commonjwterror.InvalidTokenError{}.Error()})
+			context.JSON(401, gin.H{"error": err})
 			context.Abort()
 			return
 		}
