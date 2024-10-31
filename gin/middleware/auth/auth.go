@@ -8,17 +8,19 @@ import (
 )
 
 type (
+	// Authentication interface
 	Authentication interface {
 		Authenticate()
 	}
 
+	// Middleware struct
 	Middleware struct {
-		validator *commonjwtvalidator.Validator
+		validator commonjwtvalidator.Validator
 	}
 )
 
 // NewMiddleware creates a new authentication middleware
-func NewMiddleware(validator *commonjwtvalidator.Validator) *Middleware {
+func NewMiddleware(validator commonjwtvalidator.Validator) *Middleware {
 	return &Middleware{
 		validator: validator,
 	}
@@ -52,7 +54,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		}
 
 		// Set the token in the context
-		middleware.SetToken(context, token)
+		middleware.SetCtxToken(context, token)
 
 		context.Next()
 	}
