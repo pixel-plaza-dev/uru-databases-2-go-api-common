@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-common/gin/middleware"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/gin/middleware"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/jwt/validator"
 	"strings"
 )
