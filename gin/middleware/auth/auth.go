@@ -48,7 +48,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		// Validate the token
 		token, err := m.validator.GetToken(tokenString)
 		if err != nil {
-			context.JSON(401, gin.H{"error": err})
+			context.JSON(401, gin.H{"error": err.Error()})
 			context.Abort()
 			return
 		}
