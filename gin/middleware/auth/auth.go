@@ -37,7 +37,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 
 		// Return an error if the authorization is missing or invalid
 		if len(parts) < 2 || parts[0] != "Bearer" {
-			context.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError})
+			context.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError.Error()})
 			context.Abort()
 			return
 		}
