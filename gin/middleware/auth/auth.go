@@ -10,7 +10,7 @@ import (
 type (
 	// Authentication interface
 	Authentication interface {
-		Authenticate()
+		Authenticate() gin.HandlerFunc
 	}
 
 	// Middleware struct
