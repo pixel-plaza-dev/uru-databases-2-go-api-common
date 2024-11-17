@@ -1,4 +1,4 @@
-package message
+package gin
 
 const (
 	// InternalServerError is the message for internal server error

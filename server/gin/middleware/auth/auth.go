@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/gin/middleware"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	"strings"
 )
@@ -30,13 +30,13 @@ func NewMiddleware(validator commonjwtvalidator.Validator) *Middleware {
 func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		// Get the authorization from the header
-		authorization := context.GetHeader("Authorization")
+		authorization := context.GetHeader(AuthorizationHeaderKey)
 
 		// Check if the authorization is a bearer token
 		parts := strings.Split(authorization, " ")
 
 		// Return an error if the authorization is missing or invalid
-		if len(parts) < 2 || parts[0] != "Bearer" {
+		if len(parts) < 2 || parts[0] != BearerPrefix {
 			context.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError.Error()})
 			context.Abort()
 			return
