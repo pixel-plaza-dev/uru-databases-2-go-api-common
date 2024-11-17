@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/gin"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
 )
 
 // SetCtxToken sets the token in the context
