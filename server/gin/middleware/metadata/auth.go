@@ -5,6 +5,7 @@ import (
 	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
 	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
 	"google.golang.org/grpc/credentials/oauth"
+	"strings"
 )
 
 type (
@@ -54,7 +55,8 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 
 		// Set the gRPC client context to the Gin context
 		for _, metadataField := range ctxMetadata.MetadataFields {
-			ctx.Set(metadataField.Key, grpcCtx.Value(metadataField.Key))
+			key := strings.ToLower(metadataField.Key)
+			ctx.Set(key, grpcCtx.Value(key))
 		}
 
 		// Continue
