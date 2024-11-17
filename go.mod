@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.4
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.5
 	google.golang.org/grpc v1.67.1
 )
 
