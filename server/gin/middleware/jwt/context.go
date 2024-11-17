@@ -12,6 +12,11 @@ func SetCtxTokenString(ctx *gin.Context, token string) {
 	ctx.Set(AuthorizationHeaderKey, &token)
 }
 
+// SetCtxToken sets the token in the context
+func SetCtxToken(ctx *gin.Context, token *jwt.Token) {
+	ctx.Set(TokenKey, token)
+}
+
 // GetCtxTokenString tries to get the token string from the context
 func GetCtxTokenString(ctx context.Context) (string, error) {
 	// Get the token from the context
@@ -27,11 +32,6 @@ func GetCtxTokenString(ctx context.Context) (string, error) {
 	}
 
 	return token, nil
-}
-
-// SetCtxToken sets the token in the context
-func SetCtxToken(ctx *gin.Context, token *jwt.Token) {
-	ctx.Set(TokenKey, token)
 }
 
 // GetCtxToken tries to get the token from the context
