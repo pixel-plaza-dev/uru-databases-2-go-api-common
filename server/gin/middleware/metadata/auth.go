@@ -3,9 +3,10 @@ package metadata
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
 	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
 	"google.golang.org/grpc/credentials/oauth"
-	"strings"
+	"google.golang.org/grpc/metadata"
 )
 
 type (
@@ -54,9 +55,20 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		grpcCtx := commongrpcctx.GetCtxWithMetadata(ctxMetadata, ctx)
 
 		// Set the gRPC client context to the Gin context
-		for _, metadataField := range ctxMetadata.MetadataFields {
-			key := strings.ToLower(metadataField.Key)
-			ctx.Set(key, grpcCtx.Value(key))
+		md, ok := metadata.FromOutgoingContext(grpcCtx)
+		if !ok {
+			ctx.AbortWithStatusJSON(
+				500, gin.H{
+					"error": grpc.
+						InternalServerError.Error(),
+				},
+			)
+			return
+		}
+
+		// Set the metadata to the Gin context
+		for key, values := range md {
+			ctx.Set(key, values[0])
 		}
 
 		// Continue
