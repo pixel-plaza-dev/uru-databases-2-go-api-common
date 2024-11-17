@@ -1,4 +1,4 @@
-package auth
+package jwt
 
 import (
 	"github.com/gin-gonic/gin"
@@ -26,19 +26,19 @@ func NewMiddleware(validator commonjwtvalidator.Validator) *Middleware {
 	}
 }
 
-// Authenticate return the middleware function
+// Authenticate return the middleware function that authenticates the request
 func (m *Middleware) Authenticate() gin.HandlerFunc {
-	return func(context *gin.Context) {
+	return func(ctx *gin.Context) {
 		// Get the authorization from the header
-		authorization := context.GetHeader(AuthorizationHeaderKey)
+		authorization := ctx.GetHeader(AuthorizationHeaderKey)
 
 		// Check if the authorization is a bearer token
 		parts := strings.Split(authorization, " ")
 
 		// Return an error if the authorization is missing or invalid
 		if len(parts) < 2 || parts[0] != BearerPrefix {
-			context.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError.Error()})
-			context.Abort()
+			ctx.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError.Error()})
+			ctx.Abort()
 			return
 		}
 
@@ -48,14 +48,15 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		// Validate the token
 		token, err := m.validator.GetToken(tokenString)
 		if err != nil {
-			context.JSON(401, gin.H{"error": err.Error()})
-			context.Abort()
+			ctx.JSON(401, gin.H{"error": err.Error()})
+			ctx.Abort()
 			return
 		}
 
-		// Set the token in the context
-		middleware.SetCtxToken(context, token)
+		// Set the token in the ctx
+		middleware.SetCtxToken(ctx, tokenString)
 
-		context.Next()
+		// Continue
+		ctx.Next()
 	}
 }
