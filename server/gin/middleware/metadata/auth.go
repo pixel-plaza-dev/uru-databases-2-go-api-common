@@ -2,7 +2,7 @@ package metadata
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware"
+	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
 	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
 	"google.golang.org/grpc/credentials/oauth"
 )
@@ -36,14 +36,16 @@ func NewMiddleware(tokenSource *oauth.TokenSource) (*Middleware, error) {
 func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the JWT token
-		jwtToken, err := middleware.GetCtxTokenString(ctx)
+		jwtToken, err := jwt.GetCtxTokenString(ctx)
 		if err != nil {
 			ctx.AbortWithStatusJSON(401, gin.H{"error": MissingTokenError})
 			return
 		}
 
 		// Create the context metadata
-		ctxMetadata := commongrpcctx.NewAuthenticatedCtxMetadata(m.accessToken, jwtToken)
+		ctxMetadata := commongrpcctx.NewAuthenticatedCtxMetadata(
+			m.accessToken, jwtToken,
+		)
 
 		// Get the gRPC client context
 		grpcCtx := commongrpcctx.GetCtxWithMetadata(ctxMetadata, ctx)

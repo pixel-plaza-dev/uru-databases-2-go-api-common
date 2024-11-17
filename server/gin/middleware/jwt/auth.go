@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	"strings"
 )
@@ -37,7 +36,9 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 
 		// Return an error if the authorization is missing or invalid
 		if len(parts) < 2 || parts[0] != BearerPrefix {
-			ctx.JSON(401, gin.H{"error": InvalidAuthorizationHeaderError.Error()})
+			ctx.JSON(
+				401, gin.H{"error": InvalidAuthorizationHeaderError.Error()},
+			)
 			ctx.Abort()
 			return
 		}
@@ -54,8 +55,8 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		}
 
 		// Set the token in the ctx
-		middleware.SetCtxTokenString(ctx, tokenString)
-		middleware.SetCtxToken(ctx, token)
+		SetCtxTokenString(ctx, tokenString)
+		SetCtxToken(ctx, token)
 
 		// Continue
 		ctx.Next()
