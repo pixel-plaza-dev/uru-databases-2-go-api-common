@@ -3,19 +3,20 @@ package middleware
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin"
-	commonauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
+	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
 )
 
-// SetCtxToken sets the token in the context
-func SetCtxToken(ctx *gin.Context, token string) {
-	ctx.Set(commonauth.AuthorizationHeaderKey, &token)
+// SetCtxTokenString sets the token string in the context
+func SetCtxTokenString(ctx *gin.Context, token string) {
+	ctx.Set(jwtmiddleware.AuthorizationHeaderKey, &token)
 }
 
-// GetToken tries to get the token from the context
-func GetToken(ctx context.Context) (string, error) {
+// GetCtxTokenString tries to get the token string from the context
+func GetCtxTokenString(ctx context.Context) (string, error) {
 	// Get the token from the context
-	value := ctx.Value(commonauth.AuthorizationHeaderKey)
+	value := ctx.Value(jwtmiddleware.AuthorizationHeaderKey)
 	if value == nil {
 		return "", commongin.NoTokenInContextError
 	}
@@ -24,6 +25,28 @@ func GetToken(ctx context.Context) (string, error) {
 	token, ok := value.(string)
 	if !ok {
 		return "", commongin.UnexpectedTokenTypeInContextError
+	}
+
+	return token, nil
+}
+
+// SetCtxToken sets the token in the context
+func SetCtxToken(ctx *gin.Context, token *jwt.Token) {
+	ctx.Set(jwtmiddleware.TokenKey, token)
+}
+
+// GetCtxToken tries to get the token from the context
+func GetCtxToken(ctx context.Context) (*jwt.Token, error) {
+	// Get the token from the context
+	value := ctx.Value(jwtmiddleware.TokenKey)
+	if value == nil {
+		return nil, commongin.NoTokenInContextError
+	}
+
+	// Check the type of the value
+	token, ok := value.(*jwt.Token)
+	if !ok {
+		return nil, commongin.UnexpectedTokenTypeInContextError
 	}
 
 	return token, nil

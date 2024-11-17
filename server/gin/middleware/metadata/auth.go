@@ -36,7 +36,7 @@ func NewMiddleware(tokenSource *oauth.TokenSource) (*Middleware, error) {
 func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the JWT token
-		jwtToken, err := middleware.GetToken(ctx)
+		jwtToken, err := middleware.GetCtxTokenString(ctx)
 		if err != nil {
 			ctx.AbortWithStatusJSON(401, gin.H{"error": MissingTokenError})
 			return

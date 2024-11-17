@@ -54,7 +54,8 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		}
 
 		// Set the token in the ctx
-		middleware.SetCtxToken(ctx, tokenString)
+		middleware.SetCtxTokenString(ctx, tokenString)
+		middleware.SetCtxToken(ctx, token)
 
 		// Continue
 		ctx.Next()
