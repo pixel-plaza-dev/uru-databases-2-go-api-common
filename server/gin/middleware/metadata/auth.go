@@ -35,17 +35,19 @@ func NewMiddleware(tokenSource *oauth.TokenSource) (*Middleware, error) {
 // Authenticate returns a Gin middleware that sets the authentication metadata to the gRPC request
 func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		var ctxMetadata *commongrpcctx.CtxMetadata
+
 		// Get the JWT token
 		jwtToken, err := jwt.GetCtxTokenString(ctx)
 		if err != nil {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": MissingTokenError})
-			return
+			// Create the unauthenticated context metadata
+			ctxMetadata = commongrpcctx.NewUnauthenticatedCtxMetadata(m.accessToken)
+		} else {
+			// Create the authenticated context metadata
+			ctxMetadata = commongrpcctx.NewAuthenticatedCtxMetadata(
+				m.accessToken, jwtToken,
+			)
 		}
-
-		// Create the context metadata
-		ctxMetadata := commongrpcctx.NewAuthenticatedCtxMetadata(
-			m.accessToken, jwtToken,
-		)
 
 		// Get the gRPC client context
 		grpcCtx := commongrpcctx.GetCtxWithMetadata(ctxMetadata, ctx)
