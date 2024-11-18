@@ -6,7 +6,7 @@ import (
 )
 
 // PrepareCtx prepares the context for the gRPC request
-func PrepareCtx(ctx *gin.Context, request *any) (context.Context, error) {
+func PrepareCtx(ctx *gin.Context, request interface{}) (context.Context, error) {
 	// Bind the request
 	if err := ctx.ShouldBindJSON(request); err != nil {
 		return nil, err
