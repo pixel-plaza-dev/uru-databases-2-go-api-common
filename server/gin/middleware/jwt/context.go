@@ -12,9 +12,9 @@ func SetCtxTokenString(ctx *gin.Context, token string) {
 	ctx.Set(AuthorizationHeaderKey, &token)
 }
 
-// SetCtxToken sets the token in the context
-func SetCtxToken(ctx *gin.Context, token *jwt.Token) {
-	ctx.Set(TokenKey, token)
+// SetCtxTokenClaims sets the token claims in the context
+func SetCtxTokenClaims(ctx *gin.Context, claims *jwt.MapClaims) {
+	ctx.Set(CtxTokenClaimsKey, claims)
 }
 
 // GetCtxTokenString tries to get the token string from the context
@@ -34,19 +34,19 @@ func GetCtxTokenString(ctx context.Context) (string, error) {
 	return token, nil
 }
 
-// GetCtxToken tries to get the token from the context
-func GetCtxToken(ctx context.Context) (*jwt.Token, error) {
-	// Get the token from the context
-	value := ctx.Value(TokenKey)
+// GetCtxTokenClaims tries to get the token claims from the context
+func GetCtxTokenClaims(ctx context.Context) (*jwt.MapClaims, error) {
+	// Get the token claims from the context
+	value := ctx.Value(CtxTokenClaimsKey)
 	if value == nil {
 		return nil, commongin.NoTokenInContextError
 	}
 
 	// Check the type of the value
-	token, ok := value.(*jwt.Token)
+	claims, ok := value.(*jwt.MapClaims)
 	if !ok {
 		return nil, commongin.UnexpectedTokenTypeInContextError
 	}
 
-	return token, nil
+	return claims, nil
 }

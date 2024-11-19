@@ -4,8 +4,8 @@ const (
 	// AuthorizationHeaderKey is the key of the authorization header
 	AuthorizationHeaderKey = "authorization"
 
-	// TokenKey is the key of the JWT token
-	TokenKey = "token"
+	// CtxTokenClaimsKey is the key for the JWT context claims
+	CtxTokenClaimsKey = "jwt_claims"
 
 	// BearerPrefix is the prefix of the bearer token
 	BearerPrefix = "Bearer"

@@ -10,6 +10,8 @@ type (
 	// Authentication interface
 	Authentication interface {
 		Authenticate() gin.HandlerFunc
+		AuthenticateAccessToken() gin.HandlerFunc
+		AuthenticateRefreshToken() gin.HandlerFunc
 	}
 
 	// Middleware struct
@@ -26,7 +28,7 @@ func NewMiddleware(validator commonjwtvalidator.Validator) *Middleware {
 }
 
 // Authenticate return the middleware function that authenticates the request
-func (m *Middleware) Authenticate() gin.HandlerFunc {
+func (m *Middleware) Authenticate(mustBeRefreshToken bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the authorization from the header
 		authorization := ctx.GetHeader(AuthorizationHeaderKey)
@@ -46,19 +48,29 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		// Get the token from the header
 		tokenString := parts[1]
 
-		// Validate the token
-		token, err := m.validator.GetToken(tokenString)
+		// Validate the token and get the validated claims
+		claims, err := m.validator.GetValidatedClaims(tokenString, mustBeRefreshToken)
 		if err != nil {
 			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return
 		}
 
-		// Set the token in the ctx
+		// Set the token and claims to the context
 		SetCtxTokenString(ctx, tokenString)
-		SetCtxToken(ctx, token)
+		SetCtxTokenClaims(ctx, claims)
 
 		// Continue
 		ctx.Next()
 	}
+}
+
+// AuthenticateAccessToken return the middleware function that authenticates the request with an access token
+func (m *Middleware) AuthenticateAccessToken() gin.HandlerFunc {
+	return m.Authenticate(false)
+}
+
+// AuthenticateRefreshToken return the middleware function that authenticates the request with a refresh token
+func (m *Middleware) AuthenticateRefreshToken() gin.HandlerFunc {
+	return m.Authenticate(true)
 }
