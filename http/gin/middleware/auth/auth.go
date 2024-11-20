@@ -5,7 +5,8 @@ import (
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	pbdetails "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	pbtypes "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/types"
 	"strings"
 )
 
@@ -19,9 +20,9 @@ type (
 	Middleware struct {
 		baseUri   string
 		validator commonjwtvalidator.Validator
-		restMap   *map[pbdetails.RESTEndpoint]map[pbdetails.
-				RESTMethod]pbdetails.GRPCMethod
-		grpcInterceptions *map[pbdetails.GRPCMethod]pbdetails.Interception
+		restMap   *map[string]map[pbtypes.
+				RESTMethod]pbtypes.GRPCMethod
+		grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception
 		logger            Logger
 	}
 )
@@ -30,9 +31,9 @@ type (
 func NewMiddleware(
 	baseUri string,
 	validator commonjwtvalidator.Validator,
-	restMap *map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.
+	restMap *map[string]map[pbtypes.RESTMethod]pbtypes.
 		GRPCMethod,
-	grpcInterceptions *map[pbdetails.GRPCMethod]pbdetails.Interception,
+	grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception,
 	logger Logger,
 ) (*Middleware, error) {
 	// Check if the base URI is empty
@@ -64,18 +65,33 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the full endpoint and method
 		fullRestEndpoint := ctx.FullPath()
-		restMethod := ctx.Request.Method
-		if restMethod == "" {
-			restMethod = string(pbdetails.GET)
+		method := ctx.Request.Method
+		restMethod := pbtypes.GetRESTMethod(method)
+
+		// Check if the method is not supported
+		if restMethod == pbtypes.INVALID {
+			m.logger.MethodNotSupported(fullRestEndpoint)
+			ctx.JSON(
+				500,
+				gin.H{"error": commongrpc.InternalServerError.Error()},
+			)
+			ctx.Abort()
+			return
+		}
+
+		// Check if the base URI is longer than the full path
+		if len(m.baseUri) > len(fullRestEndpoint) {
+			m.logger.BaseUriIsLongerThanFullPath(fullRestEndpoint)
+			ctx.JSON(500, gin.H{"error": commongin.InternalServerError.Error()})
+			ctx.Abort()
+			return
 		}
 
 		// Remove the base URI from the full REST endpoint
 		restEndpoint := fullRestEndpoint[len(m.baseUri):]
 
 		// Get the gRPC method
-		grpcMethod, ok := (*m.restMap)[pbdetails.RESTEndpoint(
-			restEndpoint,
-		)][pbdetails.RESTMethod(restMethod)]
+		grpcMethod, ok := (*m.restMap)[restEndpoint][restMethod]
 		if !ok {
 			m.logger.MissingRESTMapping(fullRestEndpoint)
 			ctx.JSON(
@@ -96,7 +112,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		}
 
 		// Check if there is None interception
-		if interception == pbdetails.None {
+		if interception == pbtypes.None {
 			ctx.Next()
 			return
 		}

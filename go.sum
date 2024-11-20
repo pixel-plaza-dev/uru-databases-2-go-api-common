@@ -100,8 +100,11 @@ github.com/pelletier/go-toml/v2 v2.2.2 h1:aYUidT7k73Pcl9nb2gScu7NSrKCSHIDE89b3+6
 github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h4qDAS4n929Rs=
 github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.21 h1:8yTGVx1zWIM1MREULeOXRV5WYvEZDTilHG/+8bGL6hw=
 github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.21/go.mod h1:2NdXAqLO+EKCD/aOSANYuDc+Bj2tbiadbHDQ4fWzjo0=
+github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.22/go.mod h1:Reo3wfuHJ6ikZMHEf6hBYt0/MnC60Hc1xrS7yoJhmh8=
 github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.5 h1:c79xEvv4IVHfgRzhZhZjCFe+xQSyPbjfJlnfvEjD4SU=
 github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.5/go.mod h1:Zusz7ZSuk97Cmg7LyyhQSan7qk2P4rZ26xJgYSjbGJ0=
+github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.9/go.mod h1:Zusz7ZSuk97Cmg7LyyhQSan7qk2P4rZ26xJgYSjbGJ0=
+github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.10/go.mod h1:Zusz7ZSuk97Cmg7LyyhQSan7qk2P4rZ26xJgYSjbGJ0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
