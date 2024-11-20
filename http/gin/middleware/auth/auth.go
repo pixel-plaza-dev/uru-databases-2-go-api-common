@@ -5,32 +5,47 @@ import (
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
+	pbdetails "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details"
 	"strings"
 )
 
 type (
 	// Authentication interface
 	Authentication interface {
-		Authenticate(mustBeRefreshToken bool) gin.HandlerFunc
+		Authenticate(grpcMethodName string) gin.HandlerFunc
 		AuthenticateAccessToken() gin.HandlerFunc
 		AuthenticateRefreshToken() gin.HandlerFunc
 	}
 
 	// Middleware struct
 	Middleware struct {
-		validator commonjwtvalidator.Validator
+		baseUri           string
+		validator         commonjwtvalidator.Validator
+		restMap           map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.GRPCMethod
+		grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception
+		logger            Logger
 	}
 )
 
 // NewMiddleware creates a new authentication middleware
-func NewMiddleware(validator commonjwtvalidator.Validator) *Middleware {
+func NewMiddleware(
+	baseUri string,
+	validator commonjwtvalidator.Validator,
+	restMap map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.GRPCMethod,
+	grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception,
+	logger Logger,
+) *Middleware {
 	return &Middleware{
-		validator: validator,
+		baseUri:           baseUri,
+		validator:         validator,
+		restMap:           restMap,
+		grpcInterceptions: grpcInterceptions,
+		logger:            logger,
 	}
 }
 
 // Authenticate return the middleware function that authenticates the request
-func (m *Middleware) Authenticate(mustBeRefreshToken bool) gin.HandlerFunc {
+func (m *Middleware) Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the authorization from the header
 		authorization := ctx.GetHeader(commongin.AuthorizationHeaderKey)
@@ -50,8 +65,41 @@ func (m *Middleware) Authenticate(mustBeRefreshToken bool) gin.HandlerFunc {
 		// Get the token from the header
 		tokenString := parts[1]
 
+		// Get the full endpoint and method
+		fullRestEndpoint := ctx.FullPath()
+		restMethod := ctx.Request.Method
+		if restMethod == "" {
+			restMethod = string(pbdetails.GET)
+		}
+
+		// Remove the base URI from the full REST endpoint
+		restEndpoint := fullRestEndpoint[len(m.baseUri):]
+
+		// Get the gRPC method
+		grpcMethod, ok := m.restMap[pbdetails.RESTEndpoint(
+			restEndpoint,
+		)][pbdetails.RESTMethod(restMethod)]
+		if !ok {
+			m.logger.MissingRESTMapping(fullRestEndpoint)
+			ctx.JSON(
+				500,
+				gin.H{"error": commongin.InternalServerError.Error()},
+			)
+			ctx.Abort()
+			return
+		}
+
+		// Get the gRPC method interception
+		interception, ok := m.grpcInterceptions[grpcMethod]
+		if !ok {
+			m.logger.MissingGRPCMethod(fullRestEndpoint)
+			ctx.JSON(500, gin.H{"error": commongin.InternalServerError.Error()})
+			ctx.Abort()
+			return
+		}
+
 		// Validate the token and get the validated claims
-		claims, err := m.validator.GetValidatedClaims(tokenString, mustBeRefreshToken)
+		claims, err := m.validator.GetValidatedClaims(tokenString, interception)
 		if err != nil {
 			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()
@@ -65,14 +113,4 @@ func (m *Middleware) Authenticate(mustBeRefreshToken bool) gin.HandlerFunc {
 		// Continue
 		ctx.Next()
 	}
-}
-
-// AuthenticateAccessToken return the middleware function that authenticates the request with an access token
-func (m *Middleware) AuthenticateAccessToken() gin.HandlerFunc {
-	return m.Authenticate(false)
-}
-
-// AuthenticateRefreshToken return the middleware function that authenticates the request with a refresh token
-func (m *Middleware) AuthenticateRefreshToken() gin.HandlerFunc {
-	return m.Authenticate(true)
 }
