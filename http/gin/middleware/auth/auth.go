@@ -13,8 +13,6 @@ type (
 	// Authentication interface
 	Authentication interface {
 		Authenticate(grpcMethodName string) gin.HandlerFunc
-		AuthenticateAccessToken() gin.HandlerFunc
-		AuthenticateRefreshToken() gin.HandlerFunc
 	}
 
 	// Middleware struct
