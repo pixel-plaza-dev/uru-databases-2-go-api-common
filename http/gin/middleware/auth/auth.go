@@ -19,10 +19,11 @@ type (
 
 	// Middleware struct
 	Middleware struct {
-		baseUri           string
-		validator         commonjwtvalidator.Validator
-		restMap           map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.GRPCMethod
-		grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception
+		baseUri   string
+		validator commonjwtvalidator.Validator
+		restMap   *map[pbdetails.RESTEndpoint]map[pbdetails.
+				RESTMethod]pbdetails.GRPCMethod
+		grpcInterceptions *map[pbdetails.GRPCMethod]pbdetails.Interception
 		logger            Logger
 	}
 )
@@ -31,17 +32,33 @@ type (
 func NewMiddleware(
 	baseUri string,
 	validator commonjwtvalidator.Validator,
-	restMap map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.GRPCMethod,
-	grpcInterceptions map[pbdetails.GRPCMethod]pbdetails.Interception,
+	restMap *map[pbdetails.RESTEndpoint]map[pbdetails.RESTMethod]pbdetails.
+		GRPCMethod,
+	grpcInterceptions *map[pbdetails.GRPCMethod]pbdetails.Interception,
 	logger Logger,
-) *Middleware {
+) (*Middleware, error) {
+	// Check if the base URI is empty
+	if baseUri == "" {
+		return nil, EmptyBaseUriError
+	}
+
+	// Check if the map is empty
+	if restMap == nil {
+		return nil, RESTMapNilError
+	}
+
+	// Check if the gRPC interceptions map is empty
+	if grpcInterceptions == nil {
+		return nil, GRPCInterceptionsNilError
+	}
+
 	return &Middleware{
 		baseUri:           baseUri,
 		validator:         validator,
 		restMap:           restMap,
 		grpcInterceptions: grpcInterceptions,
 		logger:            logger,
-	}
+	}, nil
 }
 
 // Authenticate return the middleware function that authenticates the request
@@ -76,7 +93,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		restEndpoint := fullRestEndpoint[len(m.baseUri):]
 
 		// Get the gRPC method
-		grpcMethod, ok := m.restMap[pbdetails.RESTEndpoint(
+		grpcMethod, ok := (*m.restMap)[pbdetails.RESTEndpoint(
 			restEndpoint,
 		)][pbdetails.RESTMethod(restMethod)]
 		if !ok {
@@ -90,7 +107,7 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 		}
 
 		// Get the gRPC method interception
-		interception, ok := m.grpcInterceptions[grpcMethod]
+		interception, ok := (*m.grpcInterceptions)[grpcMethod]
 		if !ok {
 			m.logger.MissingGRPCMethod(fullRestEndpoint)
 			ctx.JSON(500, gin.H{"error": commongin.InternalServerError.Error()})
