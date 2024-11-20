@@ -12,7 +12,7 @@ import (
 type (
 	// Authentication interface
 	Authentication interface {
-		Authenticate(grpcMethodName string) gin.HandlerFunc
+		Authenticate() gin.HandlerFunc
 	}
 
 	// Middleware struct
