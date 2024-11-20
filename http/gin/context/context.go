@@ -1,34 +1,34 @@
-package jwt
+package context
 
 import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin"
+	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 )
 
 // SetCtxTokenString sets the token string in the context
 func SetCtxTokenString(ctx *gin.Context, token string) {
-	ctx.Set(AuthorizationHeaderKey, &token)
+	ctx.Set(commongin.AuthorizationHeaderKey, &token)
 }
 
 // SetCtxTokenClaims sets the token claims in the context
 func SetCtxTokenClaims(ctx *gin.Context, claims *jwt.MapClaims) {
-	ctx.Set(CtxTokenClaimsKey, claims)
+	ctx.Set(commongin.CtxTokenClaimsKey, claims)
 }
 
 // GetCtxTokenString tries to get the token string from the context
 func GetCtxTokenString(ctx context.Context) (string, error) {
 	// Get the token from the context
-	value := ctx.Value(AuthorizationHeaderKey)
+	value := ctx.Value(commongin.AuthorizationHeaderKey)
 	if value == nil {
-		return "", commongin.NoTokenInContextError
+		return "", MissingTokenInContextError
 	}
 
 	// Check the type of the value
 	token, ok := value.(string)
 	if !ok {
-		return "", commongin.UnexpectedTokenTypeInContextError
+		return "", UnexpectedTokenTypeInContextError
 	}
 
 	return token, nil
@@ -37,15 +37,15 @@ func GetCtxTokenString(ctx context.Context) (string, error) {
 // GetCtxTokenClaims tries to get the token claims from the context
 func GetCtxTokenClaims(ctx context.Context) (*jwt.MapClaims, error) {
 	// Get the token claims from the context
-	value := ctx.Value(CtxTokenClaimsKey)
+	value := ctx.Value(commongin.CtxTokenClaimsKey)
 	if value == nil {
-		return nil, commongin.NoTokenInContextError
+		return nil, MissingTokenClaimsInContextError
 	}
 
 	// Check the type of the value
 	claims, ok := value.(*jwt.MapClaims)
 	if !ok {
-		return nil, commongin.UnexpectedTokenTypeInContextError
+		return nil, UnexpectedTokenClaimsTypeInContextError
 	}
 
 	return claims, nil

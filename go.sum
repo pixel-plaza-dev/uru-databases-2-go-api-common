@@ -50,6 +50,7 @@ github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h
 github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.6 h1:lr9bMgUY2H2hYI/h/+yllr2JAjfucJwrz3cgUpDnQ9Q=
 github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.6/go.mod h1:Ym73hlkCAWKeHH4xFkIHAhBJ+CpCnR4Fe8Jul817Gjw=
 github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.14/go.mod h1:CO7nw65TlblSVvfkwE7n5+Ih4t0Zy2eZbrY4TVK4GJ4=
+github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.15/go.mod h1:CO7nw65TlblSVvfkwE7n5+Ih4t0Zy2eZbrY4TVK4GJ4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
