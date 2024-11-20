@@ -11,7 +11,7 @@ import (
 type (
 	// Authentication interface
 	Authentication interface {
-		Authenticate() gin.HandlerFunc
+		Authenticate(mustBeRefreshToken bool) gin.HandlerFunc
 		AuthenticateAccessToken() gin.HandlerFunc
 		AuthenticateRefreshToken() gin.HandlerFunc
 	}
