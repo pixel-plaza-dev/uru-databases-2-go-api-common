@@ -4,9 +4,10 @@ go 1.23.2
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.22
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.10
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.6.0
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.17
 	google.golang.org/grpc v1.67.1
 )
 
@@ -14,6 +15,8 @@ require (
 	cloud.google.com/go/auth v0.10.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.5 // indirect
 	cloud.google.com/go/compute/metadata v0.5.2 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
