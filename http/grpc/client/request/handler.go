@@ -8,7 +8,7 @@ import (
 type (
 	// Handler interface
 	Handler interface {
-		HandleError(response interface{}, err error) (interface{}, error)
+		HandleError(err error) error
 	}
 
 	// DefaultHandler struct
