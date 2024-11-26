@@ -1,4 +1,4 @@
-package response
+package request
 
 import (
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
@@ -8,7 +8,7 @@ import (
 type (
 	// Handler interface
 	Handler interface {
-		Handle(response interface{}, err error) (interface{}, error)
+		HandleError(response interface{}, err error) (interface{}, error)
 	}
 
 	// DefaultHandler struct
@@ -22,10 +22,7 @@ func NewDefaultHandler(mode *commonflag.ModeFlag) *DefaultHandler {
 	return &DefaultHandler{mode: mode}
 }
 
-// Handle handles the response
-func (d DefaultHandler) Handle(response interface{}, err error) (interface{}, error) {
-	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(d.mode, err)
-	}
-	return response, nil
+// HandleError handles the error
+func (d DefaultHandler) HandleError(err error) error {
+	return commonclientctx.ExtractErrorFromStatus(d.mode, err)
 }
