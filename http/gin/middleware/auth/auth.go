@@ -14,7 +14,11 @@ import (
 type (
 	// Authentication interface
 	Authentication interface {
-		Authenticate() gin.HandlerFunc
+		Authenticate(
+			baseUri string,
+			restMap *map[string]map[api.RESTMethod]pbtypes.GRPCMethod,
+			grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception,
+		) gin.HandlerFunc
 	}
 
 	// Middleware struct
