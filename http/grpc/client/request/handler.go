@@ -2,7 +2,7 @@ package request
 
 import (
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	commonclienterror "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/error"
 )
 
 type (
@@ -24,5 +24,5 @@ func NewDefaultHandler(mode *commonflag.ModeFlag) *DefaultHandler {
 
 // HandleError handles the error
 func (d DefaultHandler) HandleError(err error) error {
-	return commonclientctx.ExtractErrorFromStatus(d.mode, err)
+	return commonclienterror.ExtractErrorFromStatus(d.mode, err)
 }
