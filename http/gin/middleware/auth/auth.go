@@ -6,8 +6,9 @@ import (
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
-	"github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/api"
-	pbtypes "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/types"
+	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest"
+	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/grpc"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
 	"strings"
 )
 
@@ -16,8 +17,8 @@ type (
 	Authentication interface {
 		Authenticate(
 			baseUri string,
-			restMap *map[string]map[api.RESTMethod]pbtypes.GRPCMethod,
-			grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception,
+			restMap *map[string]map[pbtypesrest.Method]pbtypesgrpc.Method,
+			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 		) gin.HandlerFunc
 	}
 
@@ -41,19 +42,17 @@ func NewMiddleware(
 
 // Authenticate return the middleware function that authenticates the request
 func (m *Middleware) Authenticate(
-	baseUri string,
-	restMap *map[string]map[api.RESTMethod]pbtypes.GRPCMethod,
-	grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception,
+	baseUri string, mapper pbconfigrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// Get the full endpoint and method
-		fullRestEndpoint := ctx.FullPath()
+		// Get the full path and method
+		fullPath := ctx.FullPath()
 		method := ctx.Request.Method
-		restMethod := api.GetRESTMethod(method)
+		restMethod := pbtypesrest.GetMethod(method)
 
 		// Check if the method is not supported
-		if restMethod == api.INVALID {
-			m.logger.MethodNotSupported(fullRestEndpoint)
+		if restMethod == pbtypesrest.INVALID {
+			m.logger.MethodNotSupported(fullPath)
 			ctx.JSON(
 				500,
 				gin.H{"error": commongrpc.InternalServerError.Error()},
@@ -63,39 +62,39 @@ func (m *Middleware) Authenticate(
 		}
 
 		// Check if the base URI is longer than the full path
-		if len(baseUri) > len(fullRestEndpoint) {
-			m.logger.BaseUriIsLongerThanFullPath(fullRestEndpoint)
-			ctx.JSON(500, gin.H{"error": commongin.InternalServerError.Error()})
+		if len(baseUri) > len(fullPath) {
+			m.logger.BaseUriIsLongerThanFullPath(fullPath)
+			ctx.JSON(500, commongin.InternalServerError)
 			ctx.Abort()
 			return
 		}
 
-		// Remove the base URI from the full REST endpoint
-		restEndpoint := fullRestEndpoint[len(baseUri):]
+		// Remove the base URI from the full path
+		relativeUri := fullPath[len(baseUri):]
 
 		// Get the gRPC method
-		grpcMethod, ok := (*restMap)[restEndpoint][restMethod]
-		if !ok {
-			m.logger.MissingRESTMapping(fullRestEndpoint)
+		grpcMethod, err := mapper.Traverse(relativeUri, restMethod)
+		if err != nil {
+			m.logger.FailedToMapRESTEndpoint(err)
 			ctx.JSON(
 				500,
-				gin.H{"error": commongin.InternalServerError.Error()},
+				commongin.InternalServerError,
 			)
 			ctx.Abort()
 			return
 		}
 
 		// Get the gRPC method interception
-		interception, ok := (*grpcInterceptions)[grpcMethod]
+		interception, ok := (*grpcInterceptions)[*grpcMethod]
 		if !ok {
-			m.logger.MissingGRPCMethod(fullRestEndpoint)
-			ctx.JSON(500, gin.H{"error": commongin.InternalServerError.Error()})
+			m.logger.MissingGRPCMethod(relativeUri)
+			ctx.JSON(500, commongin.InternalServerError)
 			ctx.Abort()
 			return
 		}
 
 		// Check if there is None interception
-		if interception == pbtypes.None {
+		if interception == pbtypesgrpc.None {
 			ctx.Next()
 			return
 		}

@@ -14,19 +14,25 @@ func NewLogger(logger commonlogger.Logger) Logger {
 	return Logger{logger: logger}
 }
 
-// MethodNotSupported logs a MethodNotSupportedError
+// MethodNotSupported logs that the method is not supported
 func (l Logger) MethodNotSupported(method string) {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Method not supported", commonlogger.StatusWarning, method))
 }
 
-// BaseUriIsLongerThanFullPath logs a BaseUriIsLongerThanFullPathError
+// BaseUriIsLongerThanFullPath logs that the base URI is longer than the full path
 func (l Logger) BaseUriIsLongerThanFullPath(fullPath string) {
-	l.logger.LogMessage(commonlogger.NewLogMessage("Base URI is longer than full path", commonlogger.StatusWarning, fullPath))
+	l.logger.LogMessage(
+		commonlogger.NewLogMessage(
+			"Base URI is longer than full path",
+			commonlogger.StatusWarning,
+			fullPath,
+		),
+	)
 }
 
-// MissingRESTMapping logs a MissingRESTMappingError
-func (l Logger) MissingRESTMapping(fullPath string) {
-	l.logger.LogMessage(commonlogger.NewLogMessage("Missing REST endpoint mapping", commonlogger.StatusWarning, fullPath))
+// FailedToMapRESTEndpoint logs that the REST endpoint could not be mapped
+func (l Logger) FailedToMapRESTEndpoint(err error) {
+	l.logger.LogError(commonlogger.NewLogError("Failed to map REST endpoint", err))
 }
 
 // MissingGRPCMethod logs a MissingGRPCMethodError

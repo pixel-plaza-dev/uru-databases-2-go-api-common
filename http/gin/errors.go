@@ -1,7 +1,9 @@
 package gin
 
-import "errors"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 var (
-	InternalServerError = errors.New("internal server error")
+	InternalServerError = gin.H{"error": "internal server error"}
 )
