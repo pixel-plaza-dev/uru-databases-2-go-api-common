@@ -17,7 +17,7 @@ type (
 	Authentication interface {
 		Authenticate(
 			baseUri string,
-			restMap *map[string]map[pbtypesrest.Method]pbtypesgrpc.Method,
+			mapper pbconfigrest.Mapper,
 			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 		) gin.HandlerFunc
 	}
