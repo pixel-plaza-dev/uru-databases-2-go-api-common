@@ -13,9 +13,11 @@ func PrepareCtx(ctx *gin.Context, request interface{}) (
 	err error,
 ) {
 	// Bind the request
-	err = ctx.ShouldBindJSON(request)
-	if err != nil && !errors.Is(err, io.EOF) {
-		return nil, err
+	if request != nil {
+		err = ctx.ShouldBindJSON(request)
+		if err != nil && !errors.Is(err, io.EOF) {
+			return nil, err
+		}
 	}
 
 	// Get the outgoing context
