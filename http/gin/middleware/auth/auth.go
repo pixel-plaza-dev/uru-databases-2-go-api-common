@@ -6,9 +6,9 @@ import (
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
-	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest"
-	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/grpc"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest"
+	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"strings"
 )
 
