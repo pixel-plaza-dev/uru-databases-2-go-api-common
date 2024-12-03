@@ -42,7 +42,7 @@ func NewMiddleware(
 
 // Authenticate return the middleware function that authenticates the request
 func (m Middleware) Authenticate(
-	baseUri string, mapper pbconfigrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
+	mapper pbconfigrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the full path and method
@@ -61,19 +61,8 @@ func (m Middleware) Authenticate(
 			return
 		}
 
-		// Check if the base URI is longer than the full path
-		if len(baseUri) > len(fullPath) {
-			m.logger.BaseUriIsLongerThanFullPath(fullPath)
-			ctx.JSON(500, commongintypes.NewInternalServerError())
-			ctx.Abort()
-			return
-		}
-
-		// Remove the base URI from the full path
-		relativeUri := fullPath[len(baseUri):]
-
 		// Get the gRPC method
-		grpcMethod, err := mapper.Traverse(relativeUri, restMethod)
+		grpcMethod, err := mapper.Traverse(fullPath, restMethod)
 		if err != nil {
 			m.logger.FailedToMapRESTEndpoint(err)
 			ctx.JSON(
@@ -87,7 +76,7 @@ func (m Middleware) Authenticate(
 		// Get the gRPC method interception
 		interception, ok := (*grpcInterceptions)[*grpcMethod]
 		if !ok {
-			m.logger.MissingGRPCMethod(relativeUri)
+			m.logger.MissingGRPCMethod(fullPath)
 			ctx.JSON(500, commongintypes.NewInternalServerError())
 			ctx.Abort()
 			return
