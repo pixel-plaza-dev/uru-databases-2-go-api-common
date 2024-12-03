@@ -6,7 +6,6 @@ import (
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"strings"
@@ -16,7 +15,7 @@ type (
 	// Authentication interface
 	Authentication interface {
 		Authenticate(
-			mapper pbconfigrest.Mapper,
+			mapper pbtypesrest.Mapper,
 			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 		) gin.HandlerFunc
 	}
@@ -41,7 +40,7 @@ func NewMiddleware(
 
 // Authenticate return the middleware function that authenticates the request
 func (m Middleware) Authenticate(
-	mapper pbconfigrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
+	mapper pbtypesrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the full path and method
