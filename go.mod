@@ -6,7 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.6.44
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.3.6
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.3.7
 	google.golang.org/grpc v1.67.1
 )
 
