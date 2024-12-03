@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
@@ -55,7 +55,7 @@ func (m Middleware) Authenticate(
 			m.logger.MethodNotSupported(fullPath)
 			ctx.JSON(
 				500,
-				gin.H{"error": commongrpc.InternalServerError.Error()},
+				commongintypes.NewInternalServerError(),
 			)
 			ctx.Abort()
 			return
@@ -64,7 +64,7 @@ func (m Middleware) Authenticate(
 		// Check if the base URI is longer than the full path
 		if len(baseUri) > len(fullPath) {
 			m.logger.BaseUriIsLongerThanFullPath(fullPath)
-			ctx.JSON(500, commongin.InternalServerError)
+			ctx.JSON(500, commongintypes.NewInternalServerError())
 			ctx.Abort()
 			return
 		}
@@ -78,7 +78,7 @@ func (m Middleware) Authenticate(
 			m.logger.FailedToMapRESTEndpoint(err)
 			ctx.JSON(
 				500,
-				commongin.InternalServerError,
+				commongintypes.NewInternalServerError(),
 			)
 			ctx.Abort()
 			return
@@ -88,7 +88,7 @@ func (m Middleware) Authenticate(
 		interception, ok := (*grpcInterceptions)[*grpcMethod]
 		if !ok {
 			m.logger.MissingGRPCMethod(relativeUri)
-			ctx.JSON(500, commongin.InternalServerError)
+			ctx.JSON(500, commongintypes.NewInternalServerError())
 			ctx.Abort()
 			return
 		}
