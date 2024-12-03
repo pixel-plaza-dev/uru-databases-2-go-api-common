@@ -16,7 +16,6 @@ type (
 	// Authentication interface
 	Authentication interface {
 		Authenticate(
-			baseUri string,
 			mapper pbconfigrest.Mapper,
 			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 		) gin.HandlerFunc
