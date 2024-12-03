@@ -25,7 +25,7 @@ type (
 	Middleware struct {
 		validator commonjwtvalidator.Validator
 		logger    Logger
-		flag      commonflag.ModeFlag
+		flag      *commonflag.ModeFlag
 	}
 )
 
@@ -33,7 +33,7 @@ type (
 func NewMiddleware(
 	validator commonjwtvalidator.Validator,
 	logger Logger,
-	flag commonflag.ModeFlag,
+	flag *commonflag.ModeFlag,
 ) (*Middleware, error) {
 	return &Middleware{
 		validator: validator,
