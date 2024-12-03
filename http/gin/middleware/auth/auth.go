@@ -5,6 +5,7 @@ import (
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
@@ -24,6 +25,7 @@ type (
 	Middleware struct {
 		validator commonjwtvalidator.Validator
 		logger    Logger
+		flag      commonflag.ModeFlag
 	}
 )
 
@@ -31,10 +33,12 @@ type (
 func NewMiddleware(
 	validator commonjwtvalidator.Validator,
 	logger Logger,
+	flag commonflag.ModeFlag,
 ) (*Middleware, error) {
 	return &Middleware{
 		validator: validator,
 		logger:    logger,
+		flag:      flag,
 	}, nil
 }
 
@@ -60,7 +64,7 @@ func (m Middleware) Authenticate(
 		}
 
 		// Get the gRPC method
-		grpcMethod, err := mapper.Traverse(fullPath, restMethod)
+		grpcMethod, err := mapper.Traverse(m.flag.IsDev(), fullPath, restMethod)
 		if err != nil {
 			m.logger.FailedToMapRESTEndpoint(err)
 			ctx.JSON(
