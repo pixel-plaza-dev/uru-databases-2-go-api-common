@@ -16,7 +16,7 @@ type (
 	// Authentication interface
 	Authentication interface {
 		Authenticate(
-			mapper pbtypesrest.Mapper,
+			mapper *pbtypesrest.Mapper,
 			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 		) gin.HandlerFunc
 	}
@@ -44,39 +44,14 @@ func NewMiddleware(
 
 // Authenticate return the middleware function that authenticates the request
 func (m Middleware) Authenticate(
-	mapper pbtypesrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
+	mapper *pbtypesrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the request URI and method
 		requestURI := ctx.Request.RequestURI
-		method := ctx.Request.Method
-		restMethod := pbtypesrest.GetMethod(method)
-
-		// Check if the method is not supported
-		if restMethod == pbtypesrest.INVALID {
-			m.logger.MethodNotSupported(requestURI)
-			ctx.JSON(
-				500,
-				commongintypes.NewInternalServerError(),
-			)
-			ctx.Abort()
-			return
-		}
-
-		// Get the gRPC method
-		grpcMethod, err := mapper.Traverse(m.flag.IsDev(), requestURI, restMethod)
-		if err != nil {
-			m.logger.FailedToMapRESTEndpoint(err)
-			ctx.JSON(
-				500,
-				commongintypes.NewInternalServerError(),
-			)
-			ctx.Abort()
-			return
-		}
 
 		// Get the gRPC method interception
-		interception, ok := (*grpcInterceptions)[*grpcMethod]
+		interception, ok := (*grpcInterceptions)[mapper.GRPCMethod]
 		if !ok {
 			m.logger.MissingGRPCMethod(requestURI)
 			ctx.JSON(500, commongintypes.NewInternalServerError())
