@@ -24,7 +24,8 @@ func PrepareCtx(ctx *gin.Context, request interface{}, handler commonclientreque
 	// Get the outgoing context
 	grpcCtx, err = GetOutgoingCtx(ctx)
 	if err != nil {
-		return nil, handler.HandlePrepareCtxError(err)
+		return nil,
+			handler.HandlePrepareCtxError(err)
 	}
 
 	return grpcCtx, nil
