@@ -5,32 +5,9 @@ type (
 	ErrorResponse struct {
 		Error string `json:"error"`
 	}
-
-	// BadRequest struct for bad request responses
-	BadRequest struct {
-		ErrorResponse
-	}
-
-	// InternalServerError struct for internal server error responses
-	InternalServerError struct {
-		ErrorResponse
-	}
 )
 
-// NewBadRequest creates a new bad request response
-func NewBadRequest(err error) *BadRequest {
-	return &BadRequest{
-		ErrorResponse: ErrorResponse{
-			Error: err.Error(),
-		},
-	}
-}
-
-// NewInternalServerError creates a new internal server error response
-func NewInternalServerError(err error) *InternalServerError {
-	return &InternalServerError{
-		ErrorResponse: ErrorResponse{
-			Error: err.Error(),
-		},
-	}
+// NewErrorResponse creates a new error response
+func NewErrorResponse(err error) ErrorResponse {
+	return ErrorResponse{Error: err.Error()}
 }

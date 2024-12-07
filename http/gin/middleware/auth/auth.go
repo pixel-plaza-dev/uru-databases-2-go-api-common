@@ -54,7 +54,7 @@ func (m Middleware) Authenticate(
 		interception, ok := (*grpcInterceptions)[mapper.GRPCMethod]
 		if !ok {
 			m.logger.MissingGRPCMethod(requestURI)
-			ctx.JSON(500, commongintypes.NewInternalServerError())
+			ctx.JSON(500, commongintypes.NewErrorResponse(commongin.InternalServerError))
 			ctx.Abort()
 			return
 		}
