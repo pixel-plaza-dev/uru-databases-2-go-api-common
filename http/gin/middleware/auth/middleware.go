@@ -12,22 +12,12 @@ import (
 	"strings"
 )
 
-type (
-	// Authentication interface
-	Authentication interface {
-		Authenticate(
-			mapper *pbtypesrest.Mapper,
-			grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
-		) gin.HandlerFunc
-	}
-
-	// Middleware struct
-	Middleware struct {
-		validator commonjwtvalidator.Validator
-		logger    Logger
-		flag      *commonflag.ModeFlag
-	}
-)
+// Middleware struct
+type Middleware struct {
+	validator commonjwtvalidator.Validator
+	logger    Logger
+	flag      *commonflag.ModeFlag
+}
 
 // NewMiddleware creates a new authentication middleware
 func NewMiddleware(
@@ -47,6 +37,19 @@ func (m Middleware) Authenticate(
 	mapper *pbtypesrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		// Check if either the mapper or the gRPC interceptions is nil
+		if mapper == nil || grpcInterceptions == nil {
+			if mapper == nil {
+				m.logger.MissingMapper()
+			}
+			if grpcInterceptions == nil {
+				m.logger.MissingGRPCInterceptions()
+			}
+			ctx.JSON(500, commongintypes.NewErrorResponse(commongin.InternalServerError))
+			ctx.Abort()
+			return
+		}
+
 		// Get the request URI and method
 		requestURI := ctx.Request.RequestURI
 

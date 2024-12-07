@@ -10,8 +10,13 @@ type Logger struct {
 }
 
 // NewLogger is the logger for the auth middleware
-func NewLogger(logger commonlogger.Logger) Logger {
-	return Logger{logger: logger}
+func NewLogger(logger commonlogger.Logger) (*Logger, error) {
+	// Check if the logger is nil
+	if logger == nil {
+		return nil, commonlogger.NilLoggerError
+	}
+
+	return &Logger{logger: logger}, nil
 }
 
 // MethodNotSupported logs that the method is not supported
@@ -38,4 +43,14 @@ func (l Logger) FailedToMapRESTEndpoint(err error) {
 // MissingGRPCMethod logs a MissingGRPCMethodError
 func (l Logger) MissingGRPCMethod(fullPath string) {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Missing gRPC method", commonlogger.StatusWarning, fullPath))
+}
+
+// MissingMapper logs a MissingMapperError
+func (l Logger) MissingMapper() {
+	l.logger.LogMessage(commonlogger.NewLogMessage("Missing mapper", commonlogger.StatusWarning))
+}
+
+// MissingGRPCInterceptions logs a MissingGRPCInterceptionsError
+func (l Logger) MissingGRPCInterceptions() {
+	l.logger.LogMessage(commonlogger.NewLogMessage("Missing gRPC interceptions", commonlogger.StatusWarning))
 }

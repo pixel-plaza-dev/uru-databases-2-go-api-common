@@ -20,8 +20,12 @@ type (
 )
 
 // NewDefaultHandler creates a new default response handler
-func NewDefaultHandler(mode *commonflag.ModeFlag) *DefaultHandler {
-	return &DefaultHandler{mode: mode}
+func NewDefaultHandler(mode *commonflag.ModeFlag) (*DefaultHandler, error) {
+	// Check if the flag mode is nil
+	if mode == nil {
+		return nil, commonflag.NilModeFlagError
+	}
+	return &DefaultHandler{mode: mode}, nil
 }
 
 // HandlePrepareCtxError handles the prepare context error

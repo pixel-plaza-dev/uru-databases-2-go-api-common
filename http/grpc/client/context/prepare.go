@@ -13,6 +13,11 @@ func PrepareCtx(ctx *gin.Context, request interface{}, handler commonclientreque
 	grpcCtx context.Context,
 	err error,
 ) {
+	// Check if the handler is nil
+	if handler == nil {
+		return nil, commonclientrequest.NilHandlerError
+	}
+
 	// Bind the request
 	if request != nil {
 		err = ctx.ShouldBindJSON(request)
