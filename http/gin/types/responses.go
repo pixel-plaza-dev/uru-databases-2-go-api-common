@@ -27,10 +27,10 @@ func NewBadRequest(err error) *BadRequest {
 }
 
 // NewInternalServerError creates a new internal server error response
-func NewInternalServerError() *InternalServerError {
+func NewInternalServerError(err error) *InternalServerError {
 	return &InternalServerError{
 		ErrorResponse: ErrorResponse{
-			Error: "internal server error",
+			Error: err.Error(),
 		},
 	}
 }
