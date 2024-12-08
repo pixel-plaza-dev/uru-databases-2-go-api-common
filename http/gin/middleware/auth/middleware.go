@@ -103,10 +103,10 @@ func (m Middleware) Authenticate(
 			// Check if the error is a gRPC status error
 			if _, ok := status.FromError(err); ok {
 				m.responseHandler.HandleErrorResponse(ctx, err)
-				return
+			} else {
+				ctx.JSON(401, gin.H{"error": err.Error()})
 			}
 
-			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return
 		}
