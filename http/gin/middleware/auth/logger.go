@@ -20,12 +20,12 @@ func NewLogger(logger commonlogger.Logger) (*Logger, error) {
 }
 
 // MethodNotSupported logs that the method is not supported
-func (l Logger) MethodNotSupported(method string) {
+func (l *Logger) MethodNotSupported(method string) {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Method not supported", commonlogger.StatusWarning, method))
 }
 
 // BaseUriIsLongerThanFullPath logs that the base URI is longer than the full path
-func (l Logger) BaseUriIsLongerThanFullPath(fullPath string) {
+func (l *Logger) BaseUriIsLongerThanFullPath(fullPath string) {
 	l.logger.LogMessage(
 		commonlogger.NewLogMessage(
 			"Base URI is longer than full path",
@@ -36,21 +36,21 @@ func (l Logger) BaseUriIsLongerThanFullPath(fullPath string) {
 }
 
 // FailedToMapRESTEndpoint logs that the REST endpoint could not be mapped
-func (l Logger) FailedToMapRESTEndpoint(err error) {
+func (l *Logger) FailedToMapRESTEndpoint(err error) {
 	l.logger.LogError(commonlogger.NewLogError("Failed to map REST endpoint", err))
 }
 
 // MissingGRPCMethod logs a MissingGRPCMethodError
-func (l Logger) MissingGRPCMethod(fullPath string) {
+func (l *Logger) MissingGRPCMethod(fullPath string) {
 	l.logger.LogMessage(commonlogger.NewLogMessage("Missing gRPC method", commonlogger.StatusWarning, fullPath))
 }
 
 // MissingMapper logs a MissingMapperError
-func (l Logger) MissingMapper() {
+func (l *Logger) MissingMapper() {
 	l.logger.LogError(commonlogger.NewLogError("Missing mapper", NilMapperError))
 }
 
 // MissingGRPCInterceptions logs a MissingGRPCInterceptionsError
-func (l Logger) MissingGRPCInterceptions() {
+func (l *Logger) MissingGRPCInterceptions() {
 	l.logger.LogError(commonlogger.NewLogError("Missing gRPC interceptions", NilGRPCInterceptionsError))
 }

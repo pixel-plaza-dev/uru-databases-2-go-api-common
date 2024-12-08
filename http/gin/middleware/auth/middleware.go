@@ -45,7 +45,7 @@ func NewMiddleware(
 }
 
 // Authenticate return the middleware function that authenticates the request
-func (m Middleware) Authenticate(
+func (m *Middleware) Authenticate(
 	mapper *pbtypesrest.Mapper, grpcInterceptions *map[pbtypesgrpc.Method]pbtypesgrpc.Interception,
 ) gin.HandlerFunc {
 	return func(ctx *gin.Context) {

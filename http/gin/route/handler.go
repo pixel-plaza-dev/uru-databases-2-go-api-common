@@ -34,7 +34,7 @@ func NewDefaultHandler(
 }
 
 // CreateAuthenticatedEndpoint creates the authenticated endpoint
-func (d DefaultHandler) CreateAuthenticatedEndpoint(mapper *pbtypesrest.Mapper, handler gin.HandlerFunc) (
+func (d *DefaultHandler) CreateAuthenticatedEndpoint(mapper *pbtypesrest.Mapper, handler gin.HandlerFunc) (
 	string,
 	gin.HandlerFunc,
 	gin.HandlerFunc,
@@ -44,7 +44,7 @@ func (d DefaultHandler) CreateAuthenticatedEndpoint(mapper *pbtypesrest.Mapper, 
 }
 
 // CreateUnauthenticatedEndpoint creates the unauthenticated endpoint
-func (d DefaultHandler) CreateUnauthenticatedEndpoint(mapper *pbtypesrest.Mapper, handler gin.HandlerFunc) (
+func (d *DefaultHandler) CreateUnauthenticatedEndpoint(mapper *pbtypesrest.Mapper, handler gin.HandlerFunc) (
 	string,
 	gin.HandlerFunc,
 ) {

@@ -34,7 +34,7 @@ func NewDefaultHandler(mode *commonflag.ModeFlag) (*DefaultHandler, error) {
 }
 
 // HandlePrepareCtxError handles the prepare context error
-func (d DefaultHandler) HandlePrepareCtxError(ctx *gin.Context, err error) {
+func (d *DefaultHandler) HandlePrepareCtxError(ctx *gin.Context, err error) {
 	if d.mode.IsProd() {
 		err = commongin.InternalServerError
 	}
@@ -43,7 +43,7 @@ func (d DefaultHandler) HandlePrepareCtxError(ctx *gin.Context, err error) {
 }
 
 // HandleResponse handles the response from the gRPC server
-func (d DefaultHandler) HandleResponse(ctx *gin.Context, code int, response interface{}, err error) {
+func (d *DefaultHandler) HandleResponse(ctx *gin.Context, code int, response interface{}, err error) {
 	// Check if the error is nil
 	if err == nil {
 		ctx.JSON(code, response)
@@ -55,7 +55,7 @@ func (d DefaultHandler) HandleResponse(ctx *gin.Context, code int, response inte
 }
 
 // HandleErrorResponse handles the error response from the gRPC server
-func (d DefaultHandler) HandleErrorResponse(ctx *gin.Context, err error) {
+func (d *DefaultHandler) HandleErrorResponse(ctx *gin.Context, err error) {
 	// Extract the gRPC code and error from the status
 	extractedCode, extractedErr := commonclientstatus.ExtractErrorFromStatus(d.mode, err)
 
