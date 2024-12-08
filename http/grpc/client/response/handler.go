@@ -68,12 +68,24 @@ func (d *DefaultHandler) HandleErrorResponse(ctx *gin.Context, err error) {
 	case codes.InvalidArgument:
 		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(extractedErr))
 	case codes.PermissionDenied:
+		if d.mode == nil || d.mode.IsProd() {
+			ctx.JSON(http.StatusForbidden, commongintypes.NewErrorResponse(commongin.Unauthorized))
+		}
 		ctx.JSON(http.StatusForbidden, commongintypes.NewErrorResponse(extractedErr))
 	case codes.Unauthenticated:
+		if d.mode == nil || d.mode.IsProd() {
+			ctx.JSON(http.StatusUnauthorized, commongintypes.NewErrorResponse(commongin.Unauthenticated))
+		}
 		ctx.JSON(http.StatusUnauthorized, commongintypes.NewErrorResponse(extractedErr))
 	case codes.Unimplemented:
+		if d.mode == nil || d.mode.IsProd() {
+			ctx.JSON(http.StatusNotImplemented, commongintypes.NewErrorResponse(commongin.InDevelopment))
+		}
 		ctx.JSON(http.StatusNotImplemented, commongintypes.NewErrorResponse(extractedErr))
 	case codes.Unavailable:
+		if d.mode == nil || d.mode.IsProd() {
+			ctx.JSON(http.StatusServiceUnavailable, commongintypes.NewErrorResponse(commongin.ServiceUnavailable))
+		}
 		ctx.JSON(http.StatusServiceUnavailable, commongintypes.NewErrorResponse(extractedErr))
 	default:
 		if d.mode == nil || d.mode.IsProd() {
