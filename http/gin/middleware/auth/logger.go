@@ -47,10 +47,10 @@ func (l Logger) MissingGRPCMethod(fullPath string) {
 
 // MissingMapper logs a MissingMapperError
 func (l Logger) MissingMapper() {
-	l.logger.LogMessage(commonlogger.NewLogMessage("Missing mapper", commonlogger.StatusWarning))
+	l.logger.LogError(commonlogger.NewLogError("Missing mapper", NilMapperError))
 }
 
 // MissingGRPCInterceptions logs a MissingGRPCInterceptionsError
 func (l Logger) MissingGRPCInterceptions() {
-	l.logger.LogMessage(commonlogger.NewLogMessage("Missing gRPC interceptions", commonlogger.StatusWarning))
+	l.logger.LogError(commonlogger.NewLogError("Missing gRPC interceptions", NilGRPCInterceptionsError))
 }

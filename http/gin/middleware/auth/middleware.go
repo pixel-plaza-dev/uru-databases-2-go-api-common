@@ -5,26 +5,28 @@ import (
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/grpc/status"
 	"strings"
 )
 
 // Middleware struct
 type Middleware struct {
-	validator commonjwtvalidator.Validator
-	logger    *Logger
-	mode      *commonflag.ModeFlag
+	validator       commonjwtvalidator.Validator
+	logger          *Logger
+	responseHandler commonclientresponse.Handler
 }
 
 // NewMiddleware creates a new authentication middleware
 func NewMiddleware(
 	validator commonjwtvalidator.Validator,
 	logger *Logger,
-	mode *commonflag.ModeFlag,
+	responseHandler commonclientresponse.Handler,
 ) (*Middleware, error) {
 	// Check if either the validator, logger, or mode flag is nil
 	if validator == nil {
@@ -33,14 +35,13 @@ func NewMiddleware(
 	if logger == nil {
 		return nil, commonlogger.NilLoggerError
 	}
-	if mode == nil {
-		return nil, commonflag.NilModeFlagError
+	if responseHandler == nil {
+		return nil, commonclientresponse.NilHandlerError
 	}
 
 	return &Middleware{
 		validator: validator,
 		logger:    logger,
-		mode:      mode,
 	}, nil
 }
 
@@ -58,7 +59,6 @@ func (m Middleware) Authenticate(
 				m.logger.MissingGRPCInterceptions()
 			}
 			ctx.JSON(500, commongintypes.NewErrorResponse(commongin.InternalServerError))
-			ctx.Abort()
 			return
 		}
 
@@ -68,9 +68,7 @@ func (m Middleware) Authenticate(
 		// Get the gRPC method interception
 		interception, ok := (*grpcInterceptions)[mapper.GRPCMethod]
 		if !ok {
-			if m.mode.IsDev() {
-				m.logger.MissingGRPCMethod(requestURI)
-			}
+			m.logger.MissingGRPCMethod(requestURI)
 			ctx.JSON(500, commongintypes.NewErrorResponse(commongin.InternalServerError))
 			ctx.Abort()
 			return
@@ -103,6 +101,12 @@ func (m Middleware) Authenticate(
 		// Validate the token and get the validated claims
 		claims, err := m.validator.GetValidatedClaims(tokenString, interception)
 		if err != nil {
+			// Check if the error is a gRPC status error
+			if _, ok := status.FromError(err); ok {
+				m.responseHandler.HandleErrorResponse(ctx, err)
+				return
+			}
+
 			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return

@@ -15,6 +15,7 @@ type (
 	Handler interface {
 		HandlePrepareCtxError(ctx *gin.Context, err error)
 		HandleResponse(ctx *gin.Context, code int, response interface{}, err error)
+		HandleErrorResponse(ctx *gin.Context, err error)
 	}
 
 	// DefaultHandler struct
@@ -49,6 +50,12 @@ func (d DefaultHandler) HandleResponse(ctx *gin.Context, code int, response inte
 		return
 	}
 
+	// Handle the error response
+	d.HandleErrorResponse(ctx, err)
+}
+
+// HandleErrorResponse handles the error response from the gRPC server
+func (d DefaultHandler) HandleErrorResponse(ctx *gin.Context, err error) {
 	// Extract the gRPC code and error from the status
 	extractedCode, extractedErr := commonclientstatus.ExtractErrorFromStatus(d.mode, err)
 
@@ -69,6 +76,9 @@ func (d DefaultHandler) HandleResponse(ctx *gin.Context, code int, response inte
 	case codes.Unavailable:
 		ctx.JSON(http.StatusServiceUnavailable, commongintypes.NewErrorResponse(extractedErr))
 	default:
+		if d.mode == nil || d.mode.IsProd() {
+			ctx.JSON(http.StatusInternalServerError, commongintypes.NewErrorResponse(commongin.InternalServerError))
+		}
 		ctx.JSON(http.StatusInternalServerError, commongintypes.NewErrorResponse(extractedErr))
 	}
 }

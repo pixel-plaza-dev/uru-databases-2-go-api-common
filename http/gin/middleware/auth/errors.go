@@ -4,9 +4,6 @@ import "errors"
 
 var (
 	InvalidAuthorizationHeaderError = errors.New("invalid authorization header")
-	EmptyBaseUriError               = errors.New("empty base uri")
-	RESTMapNilError                 = errors.New("rest map is nil")
-	GRPCInterceptionsNilError       = errors.New(
-		"grpc interceptions map is nil",
-	)
+	NilMapperError                  = errors.New("mapper cannot be nil")
+	NilGRPCInterceptionsError       = errors.New("grpc interceptions cannot be nil")
 )
