@@ -7,6 +7,7 @@ import (
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
+	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"strings"
@@ -15,20 +16,31 @@ import (
 // Middleware struct
 type Middleware struct {
 	validator commonjwtvalidator.Validator
-	logger    Logger
-	flag      *commonflag.ModeFlag
+	logger    *Logger
+	mode      *commonflag.ModeFlag
 }
 
 // NewMiddleware creates a new authentication middleware
 func NewMiddleware(
 	validator commonjwtvalidator.Validator,
-	logger Logger,
-	flag *commonflag.ModeFlag,
+	logger *Logger,
+	mode *commonflag.ModeFlag,
 ) (*Middleware, error) {
+	// Check if either the validator, logger, or mode flag is nil
+	if validator == nil {
+		return nil, commonjwtvalidator.NilValidatorError
+	}
+	if logger == nil {
+		return nil, commonlogger.NilLoggerError
+	}
+	if mode == nil {
+		return nil, commonflag.NilModeFlagError
+	}
+
 	return &Middleware{
 		validator: validator,
 		logger:    logger,
-		flag:      flag,
+		mode:      mode,
 	}, nil
 }
 
@@ -56,7 +68,9 @@ func (m Middleware) Authenticate(
 		// Get the gRPC method interception
 		interception, ok := (*grpcInterceptions)[mapper.GRPCMethod]
 		if !ok {
-			m.logger.MissingGRPCMethod(requestURI)
+			if m.mode.IsDev() {
+				m.logger.MissingGRPCMethod(requestURI)
+			}
 			ctx.JSON(500, commongintypes.NewErrorResponse(commongin.InternalServerError))
 			ctx.Abort()
 			return
