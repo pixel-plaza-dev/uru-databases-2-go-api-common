@@ -25,7 +25,7 @@ func GetOutgoingCtx(ctx *gin.Context) (context.Context, error) {
 	grpcCtx := metadata.AppendToOutgoingContext(
 		context.Background(),
 		commongrpc.AuthorizationMetadataKey,
-		token,
+		commongrpc.BearerPrefix+" "+token,
 	)
 
 	return grpcCtx, nil
