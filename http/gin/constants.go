@@ -2,7 +2,7 @@ package gin
 
 const (
 	// AuthorizationHeaderKey is the key of the authorization header
-	AuthorizationHeaderKey = "authorization"
+	AuthorizationHeaderKey = "Authorization"
 
 	// CtxTokenClaimsKey is the key for the JWT context claims
 	CtxTokenClaimsKey = "jwt_claims"
