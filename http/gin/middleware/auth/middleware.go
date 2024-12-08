@@ -39,8 +39,9 @@ func NewMiddleware(
 	}
 
 	return &Middleware{
-		validator: validator,
-		logger:    logger,
+		validator:       validator,
+		logger:          logger,
+		responseHandler: responseHandler,
 	}, nil
 }
 

@@ -40,7 +40,10 @@ func (d *DefaultHandler) CreateAuthenticatedEndpoint(mapper *pbtypesrest.Mapper,
 	gin.HandlerFunc,
 ) {
 	// Create the endpoint
-	return mapper.Path(), d.authentication.Authenticate(mapper, d.grpcInterceptions), handler
+	return mapper.Path(), d.authentication.Authenticate(
+		mapper,
+		d.grpcInterceptions,
+	), handler
 }
 
 // CreateUnauthenticatedEndpoint creates the unauthenticated endpoint
