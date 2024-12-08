@@ -1,4 +1,4 @@
-package request
+package response
 
 import (
 	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
@@ -19,7 +19,7 @@ type (
 	}
 )
 
-// NewDefaultHandler creates a new default response handler
+// NewDefaultHandler creates a new default request handler
 func NewDefaultHandler(mode *commonflag.ModeFlag) (*DefaultHandler, error) {
 	// Check if the flag mode is nil
 	if mode == nil {

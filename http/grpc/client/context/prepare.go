@@ -4,18 +4,18 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	"io"
 )
 
 // PrepareCtx prepares the context for the gRPC request
-func PrepareCtx(ctx *gin.Context, request interface{}, handler commonclientrequest.Handler) (
+func PrepareCtx(ctx *gin.Context, request interface{}, handler commonclientresponse.Handler) (
 	grpcCtx context.Context,
 	err error,
 ) {
 	// Check if the handler is nil
 	if handler == nil {
-		return nil, commonclientrequest.NilHandlerError
+		return nil, commonclientresponse.NilHandlerError
 	}
 
 	// Bind the request
