@@ -109,7 +109,7 @@ func (m Middleware) Authenticate(
 		}
 
 		// Set the token string and token claims to the context
-		commonginctx.SetCtxTokenString(ctx, tokenString)
+		commonginctx.SetCtxTokenString(ctx, &tokenString)
 		commonginctx.SetCtxTokenClaims(ctx, claims)
 
 		// Continue

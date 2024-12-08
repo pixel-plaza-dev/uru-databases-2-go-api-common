@@ -7,13 +7,13 @@ import (
 )
 
 // SetCtxTokenString sets the token string in the context
-func SetCtxTokenString(ctx *gin.Context, token string) {
-	ctx.Set(commongin.AuthorizationHeaderKey, &token)
+func SetCtxTokenString(ctx *gin.Context, token *string) {
+	ctx.Set(commongin.AuthorizationHeaderKey, *token)
 }
 
 // SetCtxTokenClaims sets the token claims in the context
 func SetCtxTokenClaims(ctx *gin.Context, claims *jwt.MapClaims) {
-	ctx.Set(commongin.CtxTokenClaimsKey, claims)
+	ctx.Set(commongin.CtxTokenClaimsKey, *claims)
 }
 
 // GetCtxTokenString tries to get the token string from the context
@@ -42,10 +42,10 @@ func GetCtxTokenClaims(ctx *gin.Context) (*jwt.MapClaims, error) {
 	}
 
 	// Check the type of the value
-	claims, ok := value.(*jwt.MapClaims)
+	claims, ok := value.(jwt.MapClaims)
 	if !ok {
 		return nil, UnexpectedTokenClaimsTypeInContextError
 	}
 
-	return claims, nil
+	return &claims, nil
 }
