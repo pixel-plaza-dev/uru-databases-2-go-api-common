@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	commonginctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
-	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/context"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -13,7 +12,7 @@ import (
 // GetOutgoingCtx returns a context with the token string
 func GetOutgoingCtx(ctx *gin.Context) (context.Context, error) {
 	// Get the token string from the context
-	token, err := jwtmiddleware.GetCtxTokenString(ctx)
+	token, err := commonginctx.GetCtxTokenString(ctx)
 	if err != nil {
 		// Check if the token is missing
 		if errors.Is(err, commonginctx.MissingTokenInContextError) {
