@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.8.2
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.9.12
 	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.5.17
 	google.golang.org/grpc v1.67.1
 )
@@ -57,7 +57,7 @@ require (
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
